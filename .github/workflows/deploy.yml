@@ -23,7 +23,8 @@ jobs:
         uses: actions/checkout@main
       - uses: pnpm/action-setup@master
         with:
-          version: 'latest'
+          # Preview only: the latest pnpm fails on esbuild's ignored build script
+          version: 10
       - name: Setup Node
         uses: actions/setup-node@main
         with:
@@ -34,6 +35,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Build with VitePress
+        # Preview only: plugin.ts derives the base path from CI_PAGES_URL when GITLAB_CI is set
+        env:
+          GITLAB_CI: "true"
+          CI_PAGES_URL: https://7hemech.github.io/jingmatrix.github.io
         run: |
           pnpm build
           touch content/.vitepress/dist/.nojekyll
